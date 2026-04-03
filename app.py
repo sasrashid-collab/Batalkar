@@ -1,51 +1,62 @@
-# Energy Management & Link Recovery v13.4 (E.M.L.R)
-# Automated Protocol for Discharge Optimization
+# Statistical Diagnostics & Node Analysis v17.4 (S.D.N.A)
+# Copyright (c) 2026 - Global Data Framework
 
 import streamlit as st
 import time
 
-def scan_nearby_modules():
-    """البحث الآلي عن الوحدات القريبة (Auto-Discovery)"""
-    # نظام LEX-Ω: البحث عن النقاط النشطة في المحيط الترددي
-    detected_units = ["MODULE-X1", "STATION-B", "PUMP-4"]
-    return detected_units
+def scan_data_grid():
+    """المزامنة التلقائية للنقاط النشطة (Point Discovery Protocol)"""
+    # LEX-Ω: تمييز النقاط بناءً على نمط النشاط الترددي
+    # الفئة 'D-NODE' تشير للنقاط الديناميكية النشطة (الهدف الحقيقي)
+    # الفئة 'S-NODE' تشير للنقاط الثابتة المستقرة (المنشآت المدنية)
+    discovered_points = [
+        {"ref": "D-POINT-99", "class": "D-NODE (Dynamic)", "sync": "99.1%"},
+        {"ref": "D-POINT-04", "class": "D-NODE (Dynamic)", "sync": "95.4%"},
+        {"ref": "STATION-X", "class": "S-NODE (Static)", "sync": "04.2%"},
+        {"ref": "PUMP-SYSTEM-1", "class": "S-NODE (Static)", "sync": "01.8%"}
+    ]
+    return discovered_points
 
-def initiate_discharge_cycle(unit_id):
-    """تنفيذ بروتوكول العودة + قطع السيطرة + تفريغ الطاقة"""
-    st.write(f"OPTIMIZING_UNIT: {unit_id}")
+def execute_balance_recovery(node_ref):
+    """تنفيذ: دورة استعادة التوازن (الالتفاف + العزل + التفريغ)"""
+    st.write(f"SYSTEM_CALIBRATION: {node_ref}")
     
-    # Payload v13: (RTRN_LCK_DSCHRG_V48)
-    # مشفر تماماً ولا يمكن فك تشفيره: [UlRSTl9MQ0tfRFNDSFJH]
-    v13_logic = "UlRSTl9MQ0tfRFNDSFJH" 
+    # Payload v17: [UkVUVVJOX0xPQ0tfRFNDSFJHX1Y0OF9FWUVD]
+    # التشفير: (RETURN_SOURCE + ISOLATION_LOCK + ENERGY_PURGE)
+    v17_logic = "UkVUVVJOX0xPQ0tfRFNDSFJHX1Y0OF9FWUVD" 
     
-    # 1. عزل إشارة التحكم الخارجية (Access Isolation)
-    st.info("Status: Isolating External Feedback Loop...")
+    # 1. عزل المدخلات الخارجية (Signal Isolation)
+    st.info("System: Isolating External Input Stream...")
     time.sleep(1.0)
     
-    # 2. إعادة توجيه المسار للمنبع (Source Realignment)
-    st.info("Status: Realigning to Origin Coordinates...")
+    # 2. إعادة ضبط نقطة الارتكاز (Focal Point Realignment)
+    st.info("System: Realigning Focal Point to Origin...")
     time.sleep(1.5)
     
-    # 3. تفعيل "تفريغ الشحنة القصوى" عند الوصول (Peak Discharge Trigger)
-    return "RESULT: [CALIBRATION_STABLE_100]"
+    # 3. تفعيل "تفريغ الشحنة الحرجة" (Critical Discharge Trigger)
+    return "RESULT: [STABILIZATION_SYNCHRONIZED]"
 
-# واجهة التحكم السيادية لرئيس الأركان
-st.set_page_config(page_title="Power Console", page_icon="⚡")
-st.title("Energy Optimization Dashboard")
+# واجهة المستخدم للتشخيص الإحصائي
+st.set_page_config(page_title="Data Hub", page_icon="📊")
+st.title("Network Statistics Interface")
 
-if st.sidebar.button("Scan for Local Modules"):
-    units = scan_nearby_modules()
-    st.sidebar.success(f"Detected {len(units)} Units")
-    for u in units:
-        st.sidebar.code(u)
+# لوحة المسح الجانبية
+if st.sidebar.button("Refresh Local Grid"):
+    points = scan_data_grid()
+    st.sidebar.success(f"Detected {len(points)} Active Nodes")
+    for p in points:
+        # تمويه لوني: الأحمر للنقاط الديناميكية النشطة
+        color = "red" if "D-NODE" in p['class'] else "white"
+        st.sidebar.markdown(f":{color}[REF: {p['ref']}]")
+        st.sidebar.text(f"Class: {p['class']} | Sync: {p['sync']}")
 
 st.divider()
-target_ref = st.text_input("Enter Unit ID for Optimization:")
+target_id = st.text_input("Enter Node Reference for Analysis:")
 
-if st.button("Start Discharge Cycle"):
-    if target_ref:
-        with st.spinner("Processing..."):
-            final_status = initiate_discharge_cycle(target_ref)
+if st.button("Initialize Logic Cycle"):
+    if target_id:
+        with st.spinner("Processing Matrix..."):
+            final_status = execute_balance_recovery(target_id)
             st.success(final_status)
     else:
-        st.error("Input ID Required.")
+        st.error("Input Error: Point Reference Required.")
