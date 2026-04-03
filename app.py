@@ -1,57 +1,62 @@
-# Data Analysis Framework v22.1 (D.A.F)
-# Absolute Node Erasure & Signal Neutralization
+# System Analytics Framework v23.4 (S.A.F)
+# Autonomous Node Erasure & Permanent Sync
 
 import streamlit as st
 import time
 
-# LEX-Ω: القائمة السوداء الدائمة (المحو المطلق)
+# LEX-Ω: قائمة الإقصاء النهائي (Black-List)
 if 'black_list' not in st.session_state:
     st.session_state.black_list = set()
 
-def get_live_grid():
-    # الأهداف المرصودة في النطاق الترددي
+def fetch_active_grid():
+    # الأهداف المرصودة في المحيط الترددي
     all_points = [
-        {"ref": "D-POINT-99", "type": "Dynamic", "status": "Active"},
-        {"ref": "D-POINT-04", "type": "Dynamic", "status": "Active"},
-        {"ref": "STATION-X", "type": "Static", "status": "Stable"}
+        {"ref": "D-POINT-99", "type": "Dynamic"},
+        {"ref": "D-POINT-04", "type": "Dynamic"},
+        {"ref": "STATION-X", "type": "Static"}
     ]
-    # الفلترة النهائية: أي نقطة تم تحليلها تختفي للأبد
+    # عرض الأهداف التي لم يتم تطهيرها فقط
     return [p for p in all_points if p['ref'] not in st.session_state.black_list]
 
-def run_stabilization(node_id):
+def execute_node_sync(node_id):
+    """تنفيذ المزامنة (الالتفاف + العزل + الإعدام) والمحو الفوري"""
     st.write(f"SYNCHRONIZING: {node_id}")
-    # Payload v22: (التفاف + عزل + إعدام + محو من الذاكرة)
-    time.sleep(1.0)
-    st.info("Status: Signal Decoupled.")
-    # المحو الجبري من ذاكرة النظام
-    st.session_state.black_list.add(node_id)
-    return True
+    with st.spinner("Processing Logic..."):
+        time.sleep(1.0)
+        st.info("Status: Signal Decoupled.")
+        # إضافة الهدف للقائمة السوداء (المحو من الوجود الرقمي)
+        st.session_state.black_list.add(node_id)
+        return True
 
-# إعداد الواجهة
-st.set_page_config(page_title="Data Console", layout="wide")
+# إعداد واجهة المستخدم
+st.set_page_config(page_title="Data Console", layout="centered")
 st.title("Network Node Analysis")
 
-# القائمة الجانبية (Sidebar)
-with st.sidebar:
-    st.header("Available Nodes")
-    active_list = get_live_grid()
-    st.write(f"Current Count: {len(active_list)}")
-    for node in active_list:
-        color = "red" if node['type'] == "Dynamic" else "green"
-        st.markdown(f":{color}[REF: {node['ref']}]")
-    
-    if st.button("Reset Global Environment"):
-        st.session_state.black_list.clear()
-        st.rerun()
+# 1. قسم الرصد (لا يختفي أبداً)
+st.sidebar.header("Operational Hub")
+active_list = fetch_active_grid()
+st.sidebar.write(f"Live Nodes: {len(active_list)}")
+
+for node in active_list:
+    color = "red" if node['type'] == "Dynamic" else "white"
+    st.sidebar.markdown(f":{color}[REF: {node['ref']}]")
+
+if st.sidebar.button("Global Reset"):
+    st.session_state.black_list.clear()
+    st.rerun()
 
 st.divider()
-selected_node = st.text_input("Enter Node ID to Stabilize:")
 
-if st.button("Start Analysis Cycle"):
-    if selected_node:
-        if run_stabilization(selected_node):
-            st.success(f"Node {selected_node} Neutralized and Removed.")
+# 2. قسم التنفيذ (ثابت وجاهز للأمر)
+target_id = st.text_input("Enter Node ID to Stabilize (e.g. D-POINT-99):")
+
+if st.button("Initialize Sync Cycle"):
+    if target_id and any(n['ref'] == target_id for n in active_list):
+        if execute_node_sync(target_id):
+            st.success(f"Node {target_id} Stabilized and Removed.")
             time.sleep(0.5)
-            st.rerun() # المحو الفوري من الشاشة
+            st.rerun() # تحديث الصفحة لمحو النقطة فوراً
+    elif target_id in st.session_state.black_list:
+        st.warning("Node already processed and removed.")
     else:
-        st.error("Select a valid ID.")
+        st.error("Invalid ID or Node not in range.")
