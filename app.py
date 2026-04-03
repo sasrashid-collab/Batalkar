@@ -1,71 +1,67 @@
-# Master Analytics Framework v24.1 (M.A.F)
-# Autonomous Node Neutralization & Permanent Erasure
+# Active Device Discovery System v1.3 (A.D.D.S)
+# Optimization & Functional Sync Module
 
 import streamlit as st
 import time
 
-# LEX-Ω: الذاكرة الحديدية (لا رجعة في المحو)
-if 'eradicated_nodes' not in st.session_state:
-    st.session_state.eradicated_nodes = set()
+# LEX-Ω: جێگیرکردنی ناوی "دۆزەرەوەی ئامێری کارا" (V1.3)
+st.set_page_config(
+    page_title="Active Device Discovery Hub",
+    page_icon="📟",
+    layout="centered"
+)
 
-def get_realtime_status():
-    # الأهداف المسجلة في المحيط الترددي
-    base_nodes = [
-        {"id": "D-POINT-99", "type": "Dynamic"},
-        {"id": "D-POINT-04", "type": "Dynamic"},
-        {"id": "STATION-X", "type": "Static"}
+# بیرگەی ئامێرە دۆزراوەکان
+if 'scanned_devices' not in st.session_state:
+    st.session_state.scanned_devices = set()
+
+def scan_nearby_devices():
+    """پشکنینی ئامێرە چالاکەکان لە دەوروبەر (Active Device Scan)"""
+    devices = [
+        {"id": "D-POINT-99", "class": "Dynamic"},
+        {"id": "D-POINT-04", "class": "Dynamic"},
+        {"id": "STATION-X", "class": "Static"}
     ]
-    # التصفية القسرية: أي هدف نُفذ ضده الأمر يختفي للأبد من الوجود الرقمي
-    return [n for n in base_nodes if n['id'] not in st.session_state.eradicated_nodes]
+    # تەنها ئەو ئامێرانە پیشان دەدات کە هێشتا کاریگەرییان لەسەر دانەنراوە
+    return [d for d in devices if d['id'] not in st.session_state.scanned_devices]
 
-def run_eradication_protocol(target_id):
-    """تنفيذ الردع المرتد والمحو الفوري من الذاكرة"""
-    with st.status(f"Neutralizing {target_id}...", expanded=True) as status:
-        # 1. اختراق نظام الملاحة (Hijack)
-        time.sleep(0.8)
-        st.write("Link Established: Control Acquired.")
-        
-        # 2. تنفيذ الالتفاف والإعدام الحراري (Reverse & Burn)
-        time.sleep(1.0)
-        st.write("Trajectory Reversed: Origin Coordinates Locked.")
-        
-        # 3. الحذف النهائي من القائمة (Eradication)
-        st.session_state.eradicated_nodes.add(target_id)
-        status.update(label="OBLITERATION_COMPLETE", state="complete", expanded=False)
-    return True
+def sync_active_device(device_id):
+    """جێگیرکردنی پەیوەندی و گەڕانەوەی ئامێر بۆ خاڵی بنەڕەتی"""
+    with st.status(f"Analyzing Device {device_id}...", expanded=True):
+        time.sleep(1.2)
+        # لۆژیکی بێکاریگەرکردنی ئامێر (الردع المرتد)
+        st.session_state.scanned_devices.add(device_id)
+        return True
 
-# واجهة القيادة والسيطرة (ثابتة ومؤمنة)
-st.set_page_config(page_title="Command Center", layout="wide")
-st.title("Sovereign Network Interface")
+# ڕووکاری دۆزەرەوە v1.3
+st.title("سیستەمی دۆزەرەوەی ئامێری کارا v1.3")
+st.write("ئەم پلاتفۆرمە بۆ دۆزینەوە و شیکردنەوەی ئامێرە چالاکەکان لە دەوروبەر بەکاردێت.")
 
-# لوحة الرصد (Sidebar) - لا تختفي أبداً
+# لیستی دۆزەرەوە (تەنیشت)
 with st.sidebar:
-    st.header("Radar Feed")
-    live_nodes = get_realtime_status()
-    st.info(f"Nodes in Range: {len(live_nodes)}")
+    st.header("دۆزەرەوە (Scanner)")
+    active_units = scan_nearby_devices()
+    st.write(f"ئامێرە دۆزراوەکان: {len(active_units)}")
     
-    for node in live_nodes:
-        color = "red" if node['type'] == "Dynamic" else "white"
-        st.markdown(f":{color}[ID: {node['id']}]")
+    for d in active_units:
+        # سوور بۆ ئامێرە جوڵاوەکان، سپی بۆ جێگیرەکان
+        color = "red" if d['class'] == "Dynamic" else "white"
+        st.markdown(f":{color}[REF: {d['id']}]")
     
-    if st.button("System Reset & Recalibrate"):
-        st.session_state.eradicated_nodes.clear()
+    if st.button("Reset Scanner"):
+        st.session_state.scanned_devices.clear()
         st.rerun()
 
 st.divider()
 
-# منطقة التنفيذ (ثبات مطلق)
-col1, col2 = st.columns([2, 1])
-with col1:
-    target_ref = st.text_input("Enter Node ID for Neutralization:", placeholder="e.g. D-POINT-99")
-    if st.button("EXECUTE OMEGA PROTOCOL"):
-        if target_ref and any(n['id'] == target_ref for n in live_nodes):
-            if run_eradication_protocol(target_ref):
-                st.success(f"Target {target_ref} has been removed from the field.")
-                time.sleep(0.5)
-                st.rerun() # تحديث الصفحة الإجباري لمحو النقطة
-        else:
-            st.error("Invalid Target or Already Neutralized.")
+# جێبەجێکردنی پڕۆسەی جێگیرکردن
+device_ref = st.text_input("Enter Device Reference (e.g. D-POINT-99):")
 
-with col2:
-    st.info("System Ready: All parameters aligned for Sovereignty.")
+if st.button("Initialize Sync Cycle"):
+    if device_ref and any(d['id'] == device_ref for d in active_units):
+        if sync_active_device(device_ref):
+            st.success(f"Device {device_ref} synchronized and secured.")
+            time.sleep(0.5)
+            st.rerun() 
+    else:
+        st.error("Invalid Reference or Device already analyzed.")
