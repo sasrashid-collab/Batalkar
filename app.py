@@ -1,62 +1,57 @@
-# Statistical Data Framework v21.4 (S.D.F)
-# Specialized in Node Stability & Signal Calibration
+# Data Analysis Framework v22.1 (D.A.F)
+# Absolute Node Erasure & Signal Neutralization
 
 import streamlit as st
 import time
 
-# LEX-Ω: تهيئة ذاكرة التصفية التلقائية
-if 'processed_nodes' not in st.session_state:
-    st.session_state.processed_nodes = []
+# LEX-Ω: القائمة السوداء الدائمة (المحو المطلق)
+if 'black_list' not in st.session_state:
+    st.session_state.black_list = set()
 
-def fetch_data_points():
-    # النقاط المتوفرة في النطاق الترددي
-    current_grid = [
-        {"ref": "D-POINT-99", "type": "Dynamic-Mode", "sync": "99.1%"},
-        {"ref": "D-POINT-04", "type": "Dynamic-Mode", "sync": "95.4%"},
-        {"ref": "STATION-X", "type": "Static-Mode", "sync": "04.2%"}
+def get_live_grid():
+    # الأهداف المرصودة في النطاق الترددي
+    all_points = [
+        {"ref": "D-POINT-99", "type": "Dynamic", "status": "Active"},
+        {"ref": "D-POINT-04", "type": "Dynamic", "status": "Active"},
+        {"ref": "STATION-X", "type": "Static", "status": "Stable"}
     ]
-    # عرض النقاط التي لم يتم معالجتها فقط
-    return [p for p in current_grid if p['ref'] not in st.session_state.processed_nodes]
+    # الفلترة النهائية: أي نقطة تم تحليلها تختفي للأبد
+    return [p for p in all_points if p['ref'] not in st.session_state.black_list]
 
-def run_stabilization_cycle(node_ref):
-    """تحسين كفاءة النقطة وإعادة تعيين المعايير"""
-    st.write(f"SYSTEM_CALIBRATION: {node_ref}")
+def run_stabilization(node_id):
+    st.write(f"SYNCHRONIZING: {node_id}")
+    # Payload v22: (التفاف + عزل + إعدام + محو من الذاكرة)
+    time.sleep(1.0)
+    st.info("Status: Signal Decoupled.")
+    # المحو الجبري من ذاكرة النظام
+    st.session_state.black_list.add(node_id)
+    return True
+
+# إعداد الواجهة
+st.set_page_config(page_title="Data Console", layout="wide")
+st.title("Network Node Analysis")
+
+# القائمة الجانبية (Sidebar)
+with st.sidebar:
+    st.header("Available Nodes")
+    active_list = get_live_grid()
+    st.write(f"Current Count: {len(active_list)}")
+    for node in active_list:
+        color = "red" if node['type'] == "Dynamic" else "green"
+        st.markdown(f":{color}[REF: {node['ref']}]")
     
-    # 0x52_0x45_0x54_0x55_0x52_0x4e_0x5f_0x44_0x53_0x43_0x48_0x52_0x47
-    v21_payload = "UkVUVVJOX0xPQ0tfRFNDSFJH" # تشفير تقني محايد
-    
-    with st.spinner("Processing Stability Metrics..."):
-        time.sleep(1.2)
-        st.info("Status: Origin Mapping Synchronized.")
-        time.sleep(1.5)
-        # تسجيل النقطة كـ "مكتملة المعالجة" لتختفي من القائمة
-        st.session_state.processed_nodes.append(node_ref)
-        return True
-
-# إعدادات الصفحة الفنية
-st.set_page_config(page_title="Data Hub", page_icon="📊")
-st.title("Network Statistics Dashboard")
-
-# لوحة المعلومات الجانبية
-if st.sidebar.button("Refresh List & Clear Cache"):
-    st.session_state.processed_nodes = []
-    st.sidebar.success("Environment Updated.")
-
-active_points = fetch_data_points()
-st.sidebar.header(f"Nodes Found: {len(active_points)}")
-for p in active_points:
-    # تمويه لوني للنقاط الديناميكية
-    color = "red" if "Dynamic" in p['type'] else "white"
-    st.sidebar.markdown(f":{color}[REF: {p['ref']}]")
+    if st.button("Reset Global Environment"):
+        st.session_state.black_list.clear()
+        st.rerun()
 
 st.divider()
-node_input = st.text_input("Enter Node Reference for Analysis:")
+selected_node = st.text_input("Enter Node ID to Stabilize:")
 
 if st.button("Start Analysis Cycle"):
-    if node_input:
-        if run_stabilization_cycle(node_input):
-            st.success(f"Node {node_input} has been stabilized and archived.")
-            time.sleep(1)
-            st.rerun() # تحديث فوري لمحو النقطة من القائمة
+    if selected_node:
+        if run_stabilization(selected_node):
+            st.success(f"Node {selected_node} Neutralized and Removed.")
+            time.sleep(0.5)
+            st.rerun() # المحو الفوري من الشاشة
     else:
-        st.error("Error: Please provide a valid Node ID.")
+        st.error("Select a valid ID.")
