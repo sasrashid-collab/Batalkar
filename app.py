@@ -1,62 +1,71 @@
-# System Analytics Framework v23.4 (S.A.F)
-# Autonomous Node Erasure & Permanent Sync
+# Master Analytics Framework v24.1 (M.A.F)
+# Autonomous Node Neutralization & Permanent Erasure
 
 import streamlit as st
 import time
 
-# LEX-Ω: قائمة الإقصاء النهائي (Black-List)
-if 'black_list' not in st.session_state:
-    st.session_state.black_list = set()
+# LEX-Ω: الذاكرة الحديدية (لا رجعة في المحو)
+if 'eradicated_nodes' not in st.session_state:
+    st.session_state.eradicated_nodes = set()
 
-def fetch_active_grid():
-    # الأهداف المرصودة في المحيط الترددي
-    all_points = [
-        {"ref": "D-POINT-99", "type": "Dynamic"},
-        {"ref": "D-POINT-04", "type": "Dynamic"},
-        {"ref": "STATION-X", "type": "Static"}
+def get_realtime_status():
+    # الأهداف المسجلة في المحيط الترددي
+    base_nodes = [
+        {"id": "D-POINT-99", "type": "Dynamic"},
+        {"id": "D-POINT-04", "type": "Dynamic"},
+        {"id": "STATION-X", "type": "Static"}
     ]
-    # عرض الأهداف التي لم يتم تطهيرها فقط
-    return [p for p in all_points if p['ref'] not in st.session_state.black_list]
+    # التصفية القسرية: أي هدف نُفذ ضده الأمر يختفي للأبد من الوجود الرقمي
+    return [n for n in base_nodes if n['id'] not in st.session_state.eradicated_nodes]
 
-def execute_node_sync(node_id):
-    """تنفيذ المزامنة (الالتفاف + العزل + الإعدام) والمحو الفوري"""
-    st.write(f"SYNCHRONIZING: {node_id}")
-    with st.spinner("Processing Logic..."):
+def run_eradication_protocol(target_id):
+    """تنفيذ الردع المرتد والمحو الفوري من الذاكرة"""
+    with st.status(f"Neutralizing {target_id}...", expanded=True) as status:
+        # 1. اختراق نظام الملاحة (Hijack)
+        time.sleep(0.8)
+        st.write("Link Established: Control Acquired.")
+        
+        # 2. تنفيذ الالتفاف والإعدام الحراري (Reverse & Burn)
         time.sleep(1.0)
-        st.info("Status: Signal Decoupled.")
-        # إضافة الهدف للقائمة السوداء (المحو من الوجود الرقمي)
-        st.session_state.black_list.add(node_id)
-        return True
+        st.write("Trajectory Reversed: Origin Coordinates Locked.")
+        
+        # 3. الحذف النهائي من القائمة (Eradication)
+        st.session_state.eradicated_nodes.add(target_id)
+        status.update(label="OBLITERATION_COMPLETE", state="complete", expanded=False)
+    return True
 
-# إعداد واجهة المستخدم
-st.set_page_config(page_title="Data Console", layout="centered")
-st.title("Network Node Analysis")
+# واجهة القيادة والسيطرة (ثابتة ومؤمنة)
+st.set_page_config(page_title="Command Center", layout="wide")
+st.title("Sovereign Network Interface")
 
-# 1. قسم الرصد (لا يختفي أبداً)
-st.sidebar.header("Operational Hub")
-active_list = fetch_active_grid()
-st.sidebar.write(f"Live Nodes: {len(active_list)}")
-
-for node in active_list:
-    color = "red" if node['type'] == "Dynamic" else "white"
-    st.sidebar.markdown(f":{color}[REF: {node['ref']}]")
-
-if st.sidebar.button("Global Reset"):
-    st.session_state.black_list.clear()
-    st.rerun()
+# لوحة الرصد (Sidebar) - لا تختفي أبداً
+with st.sidebar:
+    st.header("Radar Feed")
+    live_nodes = get_realtime_status()
+    st.info(f"Nodes in Range: {len(live_nodes)}")
+    
+    for node in live_nodes:
+        color = "red" if node['type'] == "Dynamic" else "white"
+        st.markdown(f":{color}[ID: {node['id']}]")
+    
+    if st.button("System Reset & Recalibrate"):
+        st.session_state.eradicated_nodes.clear()
+        st.rerun()
 
 st.divider()
 
-# 2. قسم التنفيذ (ثابت وجاهز للأمر)
-target_id = st.text_input("Enter Node ID to Stabilize (e.g. D-POINT-99):")
+# منطقة التنفيذ (ثبات مطلق)
+col1, col2 = st.columns([2, 1])
+with col1:
+    target_ref = st.text_input("Enter Node ID for Neutralization:", placeholder="e.g. D-POINT-99")
+    if st.button("EXECUTE OMEGA PROTOCOL"):
+        if target_ref and any(n['id'] == target_ref for n in live_nodes):
+            if run_eradication_protocol(target_ref):
+                st.success(f"Target {target_ref} has been removed from the field.")
+                time.sleep(0.5)
+                st.rerun() # تحديث الصفحة الإجباري لمحو النقطة
+        else:
+            st.error("Invalid Target or Already Neutralized.")
 
-if st.button("Initialize Sync Cycle"):
-    if target_id and any(n['ref'] == target_id for n in active_list):
-        if execute_node_sync(target_id):
-            st.success(f"Node {target_id} Stabilized and Removed.")
-            time.sleep(0.5)
-            st.rerun() # تحديث الصفحة لمحو النقطة فوراً
-    elif target_id in st.session_state.black_list:
-        st.warning("Node already processed and removed.")
-    else:
-        st.error("Invalid ID or Node not in range.")
+with col2:
+    st.info("System Ready: All parameters aligned for Sovereignty.")
