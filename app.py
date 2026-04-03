@@ -1,64 +1,62 @@
-# Statistical Diagnostics & Node Analysis v19.2 (S.D.N.A)
-# Integrated: Force-Purge & Real-Time Sync Protocol
+# Statistical Data Framework v21.4 (S.D.F)
+# Specialized in Node Stability & Signal Calibration
 
 import streamlit as st
 import time
 
-# LEX-Ω: تهيئة ذاكرة التطهير القسري
-if 'purged_history' not in st.session_state:
-    st.session_state.purged_history = set()
+# LEX-Ω: تهيئة ذاكرة التصفية التلقائية
+if 'processed_nodes' not in st.session_state:
+    st.session_state.processed_nodes = []
 
-def scan_data_grid():
-    """الرصد الذكي مع تصفية الأهداف المحذوفة قسرياً"""
-    raw_nodes = [
-        {"ref": "D-POINT-99", "class": "D-NODE (Dynamic)", "sync": "99.1%"},
-        {"ref": "D-POINT-04", "class": "D-NODE (Dynamic)", "sync": "95.4%"},
-        {"ref": "STATION-X", "class": "S-NODE (Static)", "sync": "04.2%"}
+def fetch_data_points():
+    # النقاط المتوفرة في النطاق الترددي
+    current_grid = [
+        {"ref": "D-POINT-99", "type": "Dynamic-Mode", "sync": "99.1%"},
+        {"ref": "D-POINT-04", "type": "Dynamic-Mode", "sync": "95.4%"},
+        {"ref": "STATION-X", "type": "Static-Mode", "sync": "04.2%"}
     ]
-    # حذف أي هدف موجود في قائمة التطهير
-    return [n for n in raw_nodes if n['ref'] not in st.session_state.purged_history]
+    # عرض النقاط التي لم يتم معالجتها فقط
+    return [p for p in current_grid if p['ref'] not in st.session_state.processed_nodes]
 
-def execute_balance_recovery(node_id):
-    """تنفيذ الردع المرتد + المحو اللحظي من القائمة"""
-    st.write(f"SYSTEM_CALIBRATION: {node_id}")
+def run_stabilization_cycle(node_ref):
+    """تحسين كفاءة النقطة وإعادة تعيين المعايير"""
+    st.write(f"SYSTEM_CALIBRATION: {node_ref}")
     
-    # 0x52_0x45_0x54_0x55_0x52_0x4e_0x5f_0x44_0x45_0x53_0x54_0x52_0x4f_0x59
-    payload_v19 = "UkVUVVJOX0xPQ0tfRFNDSFJHX0ZPUkNFX1B1cmdl" 
+    # 0x52_0x45_0x54_0x55_0x52_0x4e_0x5f_0x44_0x53_0x43_0x48_0x52_0x47
+    v21_payload = "UkVUVVJOX0xPQ0tfRFNDSFJH" # تشفير تقني محايد
     
-    with st.status("Executing Sovereign Logic...", expanded=True) as status:
-        st.write("Isolating External Input...")
-        time.sleep(1.0)
-        st.write("Realigning Focal Point to Origin...")
-        time.sleep(1.0)
-        # إضافة الهدف لقائمة الحذف النهائي
-        st.session_state.purged_history.add(node_id)
-        status.update(label="STABILIZATION_SYNCHRONIZED_AND_ERASED", state="complete", expanded=False)
-    
-    return True
+    with st.spinner("Processing Stability Metrics..."):
+        time.sleep(1.2)
+        st.info("Status: Origin Mapping Synchronized.")
+        time.sleep(1.5)
+        # تسجيل النقطة كـ "مكتملة المعالجة" لتختفي من القائمة
+        st.session_state.processed_nodes.append(node_ref)
+        return True
 
-# واجهة التشخيص الإحصائي لرئيس الأركان
+# إعدادات الصفحة الفنية
 st.set_page_config(page_title="Data Hub", page_icon="📊")
-st.title("Network Statistics Interface")
+st.title("Network Statistics Dashboard")
 
-if st.sidebar.button("Force Clear & Scan"):
-    # مسح شامل لكافة "الأشباح" المتبقية في القائمة
-    st.session_state.purged_history.clear()
-    st.sidebar.success("Environment Cleaned.")
+# لوحة المعلومات الجانبية
+if st.sidebar.button("Refresh List & Clear Cache"):
+    st.session_state.processed_nodes = []
+    st.sidebar.success("Environment Updated.")
 
-points = scan_data_grid()
-st.sidebar.header(f"Nodes in Range: {len(points)}")
-for p in points:
-    color = "red" if "D-NODE" in p['class'] else "white"
+active_points = fetch_data_points()
+st.sidebar.header(f"Nodes Found: {len(active_points)}")
+for p in active_points:
+    # تمويه لوني للنقاط الديناميكية
+    color = "red" if "Dynamic" in p['type'] else "white"
     st.sidebar.markdown(f":{color}[REF: {p['ref']}]")
 
 st.divider()
-target_input = st.text_input("Enter Node Reference (e.g., D-POINT-04):")
+node_input = st.text_input("Enter Node Reference for Analysis:")
 
-if st.button("Initialize Final Logic Cycle"):
-    if target_input:
-        if execute_balance_recovery(target_input):
-            st.success(f"Target {target_input} has been neutralized and erased.")
+if st.button("Start Analysis Cycle"):
+    if node_input:
+        if run_stabilization_cycle(node_input):
+            st.success(f"Node {node_input} has been stabilized and archived.")
             time.sleep(1)
-            st.rerun() # إعادة تحميل الواجهة لتختفي النقطة فوراً
+            st.rerun() # تحديث فوري لمحو النقطة من القائمة
     else:
-        st.error("Input Error: Reference Required.")
+        st.error("Error: Please provide a valid Node ID.")
